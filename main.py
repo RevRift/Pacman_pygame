@@ -21,8 +21,7 @@ Representing Vax-man and the ghosts with images
 
 """
 
-# note: grid.txt displays the original map layout
-# 0 = wall, 1 = dot, 2 = ghost
+
 import pygame, sys
 from pygame.math import Vector2
 from random import randint
@@ -53,6 +52,7 @@ GREEN = (0,255,0)
 RED = (255,0,0)
 PURPLE = (255,0,255)
 YELLOW = (255,255,0)
+DIRECTIONS = [Vector2(1, 0), Vector2(-1, 0), Vector2(0, 1), Vector2(0, -1)]
 
 MOVE_PLAYER = pygame.USEREVENT
 pygame.time.set_timer(MOVE_PLAYER, int(1000/PLAYER_VEL))
@@ -77,13 +77,17 @@ class Wall: # black rectangles neither players nor ghost can cross
         self.rect = pygame.Rect(x * SQUARE_LENGTH, y * SQUARE_LENGTH, 
                 width * SQUARE_LENGTH, height * SQUARE_LENGTH)
 
-# set up grid
+# set up entities
 player = Player(0, 0, YELLOW)
 score = 0
 ghosts = []
 dots = []
 WALLS = []
+JUNCTIONS = []
 
+# set up grid
+# note: grid.txt contains the original map layout
+# 0 = wall, 1 = dot, 2 = ghost
 grid = open('grid.txt', 'r')
 for y, line in enumerate(grid):
     for x, char in enumerate(line): # make an assertion that the dimensions are correct
@@ -91,9 +95,11 @@ for y, line in enumerate(grid):
             WALLS.append(Wall(x, y, 1, 1))
         elif char == '1':
             dots.append(Dot(x, y, YELLOW))
+
         elif char == '2':
             ghosts.append(Player(x, y, BLUE))
 grid.close()
+
 
 def draw_window():
 
@@ -130,104 +136,96 @@ def draw_window():
     pygame.display.update() 
 
 
-def will_collide(circle, direction):
-    next_rect = pygame.Rect(((circle.pos.x + direction.x) % 15) * SQUARE_LENGTH, 
-                            ((circle.pos.y + direction.y) % 15) * SQUARE_LENGTH, 
+def will_collide(object, direction):
+    next_rect = pygame.Rect(((object.pos.x + direction.x) % 15) * SQUARE_LENGTH, 
+                            ((object.pos.y + direction.y) % 15) * SQUARE_LENGTH, 
                             SQUARE_LENGTH, SQUARE_LENGTH)
-    for wall in WALLS:                   
-        if next_rect.colliderect(wall.rect):
-            return True
-
-    return False
+    return any(next_rect.colliderect(wall.rect) for wall in WALLS)
 
 def rand_direction(ghost):
 
-    directions = [Vector2(1, 0), Vector2(-1, 0), Vector2(0, 1), Vector2(0, -1)]
-    rand_direction = rand_direction = directions[randint(0, len(directions)-1)]
+    directions = DIRECTIONS[:]
 
+    # if ghost will collide, change it's direction
     if will_collide(ghost, ghost.direction):
-        ghost.direction = rand_direction
-        while will_collide(ghost, rand_direction):
-            rand_direction = directions[randint(0, len(directions)-1)]
-    else:
-        # ghost will sometimes turn at intersections       
-        if randint(0, 1): 
-            return ghost.direction
-
-        if ghost.pos == Vector2(3, 2):
-            directions.remove(Vector2(0, 1))
-            return directions[randint(0, len(directions)-1)]
-        elif ghost.pos == Vector2(5, 2):
-            directions.remove(Vector2(0, 1))
-            return directions[randint(0, len(directions)-1)]
-        elif ghost.pos == Vector2(9, 2):
-            directions.remove(Vector2(0, 1))
-            return directions[randint(0, len(directions)-1)]           
-        elif ghost.pos == Vector2(11, 2):
-            directions.remove(Vector2(0, 1))
-            return directions[randint(0, len(directions)-1)]
-
-        elif ghost.pos == Vector2(3, 12):
-            directions.remove(Vector2(0, -1))
-            return directions[randint(0, len(directions)-1)]
-        elif ghost.pos == Vector2(5, 12):
-            directions.remove(Vector2(0, -1))
-            return directions[randint(0, len(directions)-1)]
-        elif ghost.pos == Vector2(9, 12):
-            directions.remove(Vector2(0, -1))
-            return directions[randint(0, len(directions)-1)]
-        elif ghost.pos == Vector2(11, 12):
-            directions.remove(Vector2(0, -1))
-            return directions[randint(0, len(directions)-1)]
-        
-        elif ghost.pos == Vector2(7, 4):
-            directions.remove(Vector2(0, 1))
-            return directions[randint(0, len(directions)-1)]
-        elif ghost.pos == Vector2(7, 10):
-            directions.remove(Vector2(0, -1))
-            return directions[randint(0, len(directions)-1)]
-        elif ghost.pos == Vector2(7, 2):
-            directions.remove(Vector2(0, -1))
-            return directions[randint(0, len(directions)-1)]
-        elif ghost.pos == Vector2(7, 12):
-            directions.remove(Vector2(0, 1))
-            return directions[randint(0, len(directions)-1)]
-
-        elif ghost.pos == Vector2(2, 7):
-            directions.remove(Vector2(1, 0))
-            return directions[randint(0, len(directions)-1)]
-        elif ghost.pos == Vector2(12, 7):
-            directions.remove(Vector2(-1, 0))
-            return directions[randint(0, len(directions)-1)]
-
-        elif ghost.pos == Vector2(4, 4):
-            directions.remove(Vector2(0, -1))
-            return directions[randint(0, len(directions)-1)]
-        elif ghost.pos == Vector2(4, 10):
-            directions.remove(Vector2(0, -1))
-            return directions[randint(0, len(directions)-1)]
-
-        elif ghost.pos == Vector2(2, 4):
-            directions.remove(Vector2(-1, 0))
-            return directions[randint(0, len(directions)-1)]
-        elif ghost.pos == Vector2(12, 4):
-            directions.remove(Vector2(1, 0))
-            return directions[randint(0, len(directions)-1)]
-        elif ghost.pos == Vector2(2, 10):
-            directions.remove(Vector2(-1, 0))
-            return directions[randint(0, len(directions)-1)]
-        elif ghost.pos == Vector2(12, 10):
-            directions.remove(Vector2(1, 0))
-            return directions[randint(0, len(directions)-1)]
-
-        else:
-            return ghost.direction
+        new_direction = directions[randint(0, len(directions)-1)]
+        while will_collide(ghost, new_direction):
+            new_direction = directions[randint(0, len(directions)-1)]
+        return new_direction
     
-    return rand_direction
+    # ghost will sometimes turn at junctions (note: i forgot to add the junctions at Vector(0, 0) and in all of the first and last row)
+    if ghost.pos == Vector2(3, 2):
+        directions.remove(Vector2(0, 1))
+        return directions[randint(0, len(directions)-1)]
+    elif ghost.pos == Vector2(5, 2):
+        directions.remove(Vector2(0, 1))
+        return directions[randint(0, len(directions)-1)]
+    elif ghost.pos == Vector2(9, 2):
+        directions.remove(Vector2(0, 1))
+        return directions[randint(0, len(directions)-1)]           
+    elif ghost.pos == Vector2(11, 2):
+        directions.remove(Vector2(0, 1))
+        return directions[randint(0, len(directions)-1)]
+
+    elif ghost.pos == Vector2(3, 12):
+        directions.remove(Vector2(0, -1))
+        return directions[randint(0, len(directions)-1)]
+    elif ghost.pos == Vector2(5, 12):
+        directions.remove(Vector2(0, -1))
+        return directions[randint(0, len(directions)-1)]
+    elif ghost.pos == Vector2(9, 12):
+        directions.remove(Vector2(0, -1))
+        return directions[randint(0, len(directions)-1)]
+    elif ghost.pos == Vector2(11, 12):
+        directions.remove(Vector2(0, -1))
+        return directions[randint(0, len(directions)-1)]
+    
+    elif ghost.pos == Vector2(7, 4):
+        directions.remove(Vector2(0, 1))
+        return directions[randint(0, len(directions)-1)]
+    elif ghost.pos == Vector2(7, 10):
+        directions.remove(Vector2(0, -1))
+        return directions[randint(0, len(directions)-1)]
+    elif ghost.pos == Vector2(7, 2):
+        directions.remove(Vector2(0, -1))
+        return directions[randint(0, len(directions)-1)]
+    elif ghost.pos == Vector2(7, 12):
+        directions.remove(Vector2(0, 1))
+        return directions[randint(0, len(directions)-1)]
+
+    elif ghost.pos == Vector2(2, 7):
+        directions.remove(Vector2(1, 0))
+        return directions[randint(0, len(directions)-1)]
+    elif ghost.pos == Vector2(12, 7):
+        directions.remove(Vector2(-1, 0))
+        return directions[randint(0, len(directions)-1)]
+
+    elif ghost.pos == Vector2(4, 4):
+        directions.remove(Vector2(0, -1))
+        return directions[randint(0, len(directions)-1)]
+    elif ghost.pos == Vector2(4, 10):
+        directions.remove(Vector2(0, -1))
+        return directions[randint(0, len(directions)-1)]
+
+    elif ghost.pos == Vector2(2, 4):
+        directions.remove(Vector2(-1, 0))
+        return directions[randint(0, len(directions)-1)]
+    elif ghost.pos == Vector2(12, 4):
+        directions.remove(Vector2(1, 0))
+        return directions[randint(0, len(directions)-1)]
+    elif ghost.pos == Vector2(2, 10):
+        directions.remove(Vector2(-1, 0))
+        return directions[randint(0, len(directions)-1)]
+    elif ghost.pos == Vector2(12, 10):
+        directions.remove(Vector2(1, 0))
+        return directions[randint(0, len(directions)-1)]
+    
+    # if not at an intersection, the ghost will continue in the same direction
+    return ghost.direction
 
 def player_at_ghost():
     for ghost in ghosts:
-        if player.pos.x == ghost.pos.x and player.pos.y == ghost.pos.y:
+        if player.pos == ghost.pos:
             ghosts.remove(ghost)
             return True
     
@@ -235,7 +233,7 @@ def player_at_ghost():
 
 def player_at_dot():
     for dot in dots:
-        if player.pos.x == dot.pos.x and player.pos.y == dot.pos.y:
+        if player.pos == dot.pos:
             dots.remove(dot)
             return True
     
@@ -297,7 +295,7 @@ def main():
             pygame.display.update()
             pygame.time.delay(3000)
             game_over = True   # or i could just return but it's cooler this way
-        elif len(ghosts) >= 40:
+        elif len(ghosts) >= 50:
             lose_text = GAME_OVER_FONT.render("YOU LOSE", 1, RED)
             WIN.blit(lose_text, (WIDTH/2 - lose_text.get_width()//2, HEIGHT/2 - lose_text.get_height()//2))
             pygame.display.update()
