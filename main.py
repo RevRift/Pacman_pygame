@@ -21,6 +21,8 @@ Representing Vax-man and the ghosts with images
 
 """
 
+# note: grid.txt displays the original map layout
+# 0 = wall, 1 = dot, 2 = ghost
 import pygame, sys
 from pygame.math import Vector2
 from random import randint
@@ -59,33 +61,38 @@ pygame.time.set_timer(MOVE_GHOSTS, int(1000/GHOST_VEL))
 DUPLICATE_GHOSTS = pygame.USEREVENT + 2
 pygame.time.set_timer(DUPLICATE_GHOSTS, int(15000)) # 15s
 
-class Circle: # represents player(i.e. vax-man), ghosts, and dots
-
+class Player: # represents player(i.e. vax-man), ghosts, and dots
     def __init__(self, x, y, color):
         self.pos = Vector2(x, y)
+        self.color = color
         self.direction = Vector2(0, 1)
+
+class Dot:
+    def __init__(self, x, y, color):
+        self.pos = Vector2(x, y)
         self.color = color
 
-player = Circle(0, 0, YELLOW)
-score = 0
-ghosts = [
-    Circle(11, 0, BLUE),
-    Circle(2, 10, BLUE),
-    Circle(10, 7, BLUE),
-    Circle(7, 4, BLUE),
-    Circle(9, 12, BLUE),
-    Circle(11, 0, BLUE),
-    Circle(2, 10, BLUE),
-    Circle(10, 7, BLUE),
-    Circle(7, 4, BLUE),
-    Circle(9, 12, BLUE)
-]
-
 class Wall: # black rectangles neither players nor ghost can cross
-
     def __init__(self, x, y, width, height):
         self.rect = pygame.Rect(x * SQUARE_LENGTH, y * SQUARE_LENGTH, 
                 width * SQUARE_LENGTH, height * SQUARE_LENGTH)
+
+player = Player(0, 0, YELLOW)
+score = 0
+ghosts = [
+    Player(11, 0, BLUE),
+    Player(2, 10, BLUE),
+    Player(10, 7, BLUE),
+    Player(7, 4, BLUE),
+    Player(9, 12, BLUE),
+    Player(11, 0, BLUE),
+    Player(2, 10, BLUE),
+    Player(10, 7, BLUE),
+    Player(7, 4, BLUE),
+    Player(9, 12, BLUE)
+]
+
+
 
 WALLS = [ 
 # (x, y, width, height)
@@ -113,140 +120,140 @@ WALLS = [
 ]
 
 dots = [
-    Circle(0, 0, YELLOW),
-    Circle(0, 1, YELLOW),
-    Circle(0, 2, YELLOW),
-    Circle(0, 3, YELLOW),
-    Circle(0, 4, YELLOW),
-    Circle(0, 5, YELLOW),
-    Circle(0, 6, YELLOW),
-    Circle(0, 7, YELLOW),
-    Circle(0, 8, YELLOW),
-    Circle(0, 9, YELLOW),
-    Circle(0, 10, YELLOW),
-    Circle(0, 11, YELLOW),
-    Circle(0, 12, YELLOW),
-    Circle(0, 13, YELLOW),
-    Circle(0, 14, YELLOW),
-    Circle(1, 0, YELLOW),
-    Circle(1, 0, YELLOW),
-    Circle(1, 7, YELLOW),
-    Circle(1, 14, YELLOW),
-    Circle(2, 0, YELLOW),
-    Circle(2, 2, YELLOW),
-    Circle(2, 3, YELLOW),
-    Circle(2, 4, YELLOW),
-    Circle(2, 5, YELLOW),
-    Circle(2, 6, YELLOW),
-    Circle(2, 7, YELLOW),
-    Circle(2, 8, YELLOW),
-    Circle(2, 9, YELLOW),
-    Circle(2, 10, YELLOW),
-    Circle(2, 11, YELLOW),
-    Circle(2, 12, YELLOW),
-    Circle(2, 14, YELLOW),
-    Circle(3, 0, YELLOW),
-    Circle(3, 1, YELLOW),
-    Circle(3, 2, YELLOW),
-    Circle(3, 4, YELLOW),
-    Circle(3, 10, YELLOW),
-    Circle(3, 12, YELLOW),
-    Circle(3, 13, YELLOW),
-    Circle(3, 14, YELLOW),
-    Circle(4, 2, YELLOW),
-    Circle(4, 4, YELLOW),
-    Circle(4, 5, YELLOW),
-    Circle(4, 6, YELLOW),
-    Circle(4, 7, YELLOW),
-    Circle(4, 8, YELLOW),
-    Circle(4, 9, YELLOW),
-    Circle(4, 10, YELLOW),
-    Circle(4, 12, YELLOW),
-    Circle(5, 0, YELLOW),
-    Circle(5, 1, YELLOW),
-    Circle(5, 2, YELLOW),
-    Circle(5, 4, YELLOW),
-    Circle(5, 10, YELLOW),
-    Circle(5, 12, YELLOW),
-    Circle(5, 13, YELLOW),
-    Circle(5, 14, YELLOW),
-    Circle(6, 0, YELLOW),
-    Circle(6, 2, YELLOW),
-    Circle(6, 4, YELLOW),
-    Circle(6, 10, YELLOW),
-    Circle(6, 12, YELLOW),
-    Circle(6, 14, YELLOW),
-    Circle(7, 0, YELLOW),
-    Circle(7, 2, YELLOW),
-    Circle(7, 3, YELLOW),
-    Circle(7, 4, YELLOW),
-    Circle(7, 10, YELLOW),
-    Circle(7, 11, YELLOW),
-    Circle(7, 12, YELLOW),
-    Circle(7, 14, YELLOW),
-    Circle(8, 0, YELLOW),
-    Circle(8, 2, YELLOW),
-    Circle(8, 4, YELLOW),
-    Circle(8, 10, YELLOW),
-    Circle(8, 12, YELLOW),
-    Circle(8, 14, YELLOW),
-    Circle(9, 0, YELLOW),
-    Circle(9, 1, YELLOW),
-    Circle(9, 2, YELLOW),
-    Circle(9, 4, YELLOW),
-    Circle(9, 10, YELLOW),
-    Circle(9, 12, YELLOW),
-    Circle(9, 13, YELLOW),
-    Circle(9, 14, YELLOW),
-    Circle(10, 2, YELLOW),
-    Circle(10, 4, YELLOW),
-    Circle(10, 5, YELLOW),
-    Circle(10, 6, YELLOW),
-    Circle(10, 7, YELLOW),
-    Circle(10, 8, YELLOW),
-    Circle(10, 9, YELLOW),
-    Circle(10, 10, YELLOW),
-    Circle(10, 12, YELLOW),
-    Circle(11, 0, YELLOW),
-    Circle(11, 1, YELLOW),
-    Circle(11, 2, YELLOW),
-    Circle(11, 4, YELLOW),
-    Circle(11, 10, YELLOW),
-    Circle(11, 12, YELLOW),
-    Circle(11, 13, YELLOW),
-    Circle(11, 14, YELLOW),
-    Circle(12, 0, YELLOW),
-    Circle(12, 2, YELLOW),
-    Circle(12, 3, YELLOW),
-    Circle(12, 4, YELLOW),
-    Circle(12, 5, YELLOW),
-    Circle(12, 6, YELLOW),
-    Circle(12, 7, YELLOW),
-    Circle(12, 8, YELLOW),
-    Circle(12, 9, YELLOW),
-    Circle(12, 10, YELLOW),
-    Circle(12, 11, YELLOW),
-    Circle(12, 12, YELLOW),
-    Circle(12, 14, YELLOW),
-    Circle(13, 0, YELLOW),
-    Circle(13, 0, YELLOW),
-    Circle(13, 7, YELLOW),
-    Circle(13, 14, YELLOW),
-    Circle(14, 0, YELLOW),
-    Circle(14, 1, YELLOW),
-    Circle(14, 2, YELLOW),
-    Circle(14, 3, YELLOW),
-    Circle(14, 4, YELLOW),
-    Circle(14, 5, YELLOW),
-    Circle(14, 6, YELLOW),
-    Circle(14, 7, YELLOW),
-    Circle(14, 8, YELLOW),
-    Circle(14, 9, YELLOW),
-    Circle(14, 10, YELLOW),
-    Circle(14, 11, YELLOW),
-    Circle(14, 12, YELLOW),
-    Circle(14, 13, YELLOW),
-    Circle(14, 14, YELLOW)
+    Dot(0, 0, YELLOW),
+    Dot(0, 1, YELLOW),
+    Dot(0, 2, YELLOW),
+    Dot(0, 3, YELLOW),
+    Dot(0, 4, YELLOW),
+    Dot(0, 5, YELLOW),
+    Dot(0, 6, YELLOW),
+    Dot(0, 7, YELLOW),
+    Dot(0, 8, YELLOW),
+    Dot(0, 9, YELLOW),
+    Dot(0, 10, YELLOW),
+    Dot(0, 11, YELLOW),
+    Dot(0, 12, YELLOW),
+    Dot(0, 13, YELLOW),
+    Dot(0, 14, YELLOW),
+    Dot(1, 0, YELLOW),
+    Dot(1, 0, YELLOW),
+    Dot(1, 7, YELLOW),
+    Dot(1, 14, YELLOW),
+    Dot(2, 0, YELLOW),
+    Dot(2, 2, YELLOW),
+    Dot(2, 3, YELLOW),
+    Dot(2, 4, YELLOW),
+    Dot(2, 5, YELLOW),
+    Dot(2, 6, YELLOW),
+    Dot(2, 7, YELLOW),
+    Dot(2, 8, YELLOW),
+    Dot(2, 9, YELLOW),
+    Dot(2, 10, YELLOW),
+    Dot(2, 11, YELLOW),
+    Dot(2, 12, YELLOW),
+    Dot(2, 14, YELLOW),
+    Dot(3, 0, YELLOW),
+    Dot(3, 1, YELLOW),
+    Dot(3, 2, YELLOW),
+    Dot(3, 4, YELLOW),
+    Dot(3, 10, YELLOW),
+    Dot(3, 12, YELLOW),
+    Dot(3, 13, YELLOW),
+    Dot(3, 14, YELLOW),
+    Dot(4, 2, YELLOW),
+    Dot(4, 4, YELLOW),
+    Dot(4, 5, YELLOW),
+    Dot(4, 6, YELLOW),
+    Dot(4, 7, YELLOW),
+    Dot(4, 8, YELLOW),
+    Dot(4, 9, YELLOW),
+    Dot(4, 10, YELLOW),
+    Dot(4, 12, YELLOW),
+    Dot(5, 0, YELLOW),
+    Dot(5, 1, YELLOW),
+    Dot(5, 2, YELLOW),
+    Dot(5, 4, YELLOW),
+    Dot(5, 10, YELLOW),
+    Dot(5, 12, YELLOW),
+    Dot(5, 13, YELLOW),
+    Dot(5, 14, YELLOW),
+    Dot(6, 0, YELLOW),
+    Dot(6, 2, YELLOW),
+    Dot(6, 4, YELLOW),
+    Dot(6, 10, YELLOW),
+    Dot(6, 12, YELLOW),
+    Dot(6, 14, YELLOW),
+    Dot(7, 0, YELLOW),
+    Dot(7, 2, YELLOW),
+    Dot(7, 3, YELLOW),
+    Dot(7, 4, YELLOW),
+    Dot(7, 10, YELLOW),
+    Dot(7, 11, YELLOW),
+    Dot(7, 12, YELLOW),
+    Dot(7, 14, YELLOW),
+    Dot(8, 0, YELLOW),
+    Dot(8, 2, YELLOW),
+    Dot(8, 4, YELLOW),
+    Dot(8, 10, YELLOW),
+    Dot(8, 12, YELLOW),
+    Dot(8, 14, YELLOW),
+    Dot(9, 0, YELLOW),
+    Dot(9, 1, YELLOW),
+    Dot(9, 2, YELLOW),
+    Dot(9, 4, YELLOW),
+    Dot(9, 10, YELLOW),
+    Dot(9, 12, YELLOW),
+    Dot(9, 13, YELLOW),
+    Dot(9, 14, YELLOW),
+    Dot(10, 2, YELLOW),
+    Dot(10, 4, YELLOW),
+    Dot(10, 5, YELLOW),
+    Dot(10, 6, YELLOW),
+    Dot(10, 7, YELLOW),
+    Dot(10, 8, YELLOW),
+    Dot(10, 9, YELLOW),
+    Dot(10, 10, YELLOW),
+    Dot(10, 12, YELLOW),
+    Dot(11, 0, YELLOW),
+    Dot(11, 1, YELLOW),
+    Dot(11, 2, YELLOW),
+    Dot(11, 4, YELLOW),
+    Dot(11, 10, YELLOW),
+    Dot(11, 12, YELLOW),
+    Dot(11, 13, YELLOW),
+    Dot(11, 14, YELLOW),
+    Dot(12, 0, YELLOW),
+    Dot(12, 2, YELLOW),
+    Dot(12, 3, YELLOW),
+    Dot(12, 4, YELLOW),
+    Dot(12, 5, YELLOW),
+    Dot(12, 6, YELLOW),
+    Dot(12, 7, YELLOW),
+    Dot(12, 8, YELLOW),
+    Dot(12, 9, YELLOW),
+    Dot(12, 10, YELLOW),
+    Dot(12, 11, YELLOW),
+    Dot(12, 12, YELLOW),
+    Dot(12, 14, YELLOW),
+    Dot(13, 0, YELLOW),
+    Dot(13, 0, YELLOW),
+    Dot(13, 7, YELLOW),
+    Dot(13, 14, YELLOW),
+    Dot(14, 0, YELLOW),
+    Dot(14, 1, YELLOW),
+    Dot(14, 2, YELLOW),
+    Dot(14, 3, YELLOW),
+    Dot(14, 4, YELLOW),
+    Dot(14, 5, YELLOW),
+    Dot(14, 6, YELLOW),
+    Dot(14, 7, YELLOW),
+    Dot(14, 8, YELLOW),
+    Dot(14, 9, YELLOW),
+    Dot(14, 10, YELLOW),
+    Dot(14, 11, YELLOW),
+    Dot(14, 12, YELLOW),
+    Dot(14, 13, YELLOW),
+    Dot(14, 14, YELLOW)
 # don't ask how long this took
 ]
 
@@ -428,11 +435,11 @@ def main():
             if player_at_dot():
                 score += 1
             
-            if event.type == DUPLICATE_GHOSTS:
-                ghost_count = len(ghosts)
-                for i in range(ghost_count):
-                    new_ghost = Circle(ghosts[i].pos.x, ghosts[i].pos.y, ghosts[i].color)
-                    ghosts.append(new_ghost)
+            # if event.type == DUPLICATE_GHOSTS:
+            #     ghost_count = len(ghosts)
+            #     for i in range(ghost_count):
+            #         new_ghost = Circle(ghosts[i].pos.x, ghosts[i].pos.y, ghosts[i].color)
+            #         ghosts.append(new_ghost)
             
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_LEFT and not will_collide(player, Vector2(-1, 0)):
