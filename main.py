@@ -213,14 +213,16 @@ class Game:
                         Game.ghosts.append(new_ghost)
                 
                 if event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_LEFT and not Game.will_collide(Game.player, Vector2(-1, 0)):
+                    if event.key in (pygame.K_LEFT, pygame.K_a, pygame.K_KP4) and not Game.will_collide(Game.player, Vector2(-1, 0)):
                         Game.player.direction = Vector2(-1, 0)
-                    if event.key == pygame.K_RIGHT and not Game.will_collide(Game.player, Vector2(1, 0)):
+                    elif event.key in (pygame.K_RIGHT, pygame.K_d, pygame.K_KP6) and not Game.will_collide(Game.player, Vector2(1, 0)):
                         Game.player.direction = Vector2(1, 0)
-                    if event.key == pygame.K_UP and not Game.will_collide(Game.player, Vector2(0, -1)):
+                    elif event.key in (pygame.K_UP, pygame.K_w, pygame.K_KP8) and not Game.will_collide(Game.player, Vector2(0, -1)):
                         Game.player.direction = Vector2(0, -1)
-                    if event.key == pygame.K_DOWN and not Game.will_collide(Game.player, Vector2(0, 1)):
+                    elif event.key in (pygame.K_DOWN, pygame.K_s, pygame.K_KP2) and not Game.will_collide(Game.player, Vector2(0, 1)):
                         Game.player.direction = Vector2(0, 1)
+                    elif event.key == pygame.K_BACKSPACE:
+                        game_over = True
                     
             Game.draw_window()
 
