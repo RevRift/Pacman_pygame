@@ -77,185 +77,23 @@ class Wall: # black rectangles neither players nor ghost can cross
         self.rect = pygame.Rect(x * SQUARE_LENGTH, y * SQUARE_LENGTH, 
                 width * SQUARE_LENGTH, height * SQUARE_LENGTH)
 
+# set up grid
 player = Player(0, 0, YELLOW)
 score = 0
-ghosts = [
-    Player(11, 0, BLUE),
-    Player(2, 10, BLUE),
-    Player(10, 7, BLUE),
-    Player(7, 4, BLUE),
-    Player(9, 12, BLUE),
-    Player(11, 0, BLUE),
-    Player(2, 10, BLUE),
-    Player(10, 7, BLUE),
-    Player(7, 4, BLUE),
-    Player(9, 12, BLUE)
-]
+ghosts = []
+dots = []
+WALLS = []
 
-
-
-WALLS = [ 
-# (x, y, width, height)
-    Wall(1, 1, 2, 1),
-    Wall(1, 2, 1, 5),
-    Wall(1, 8, 1, 5),
-    Wall(1, 13, 2, 1),
-    Wall(4, 0, 1, 2),
-    Wall(10, 0, 1, 2),
-    Wall(6, 1, 3, 1),
-    Wall(3, 3, 4, 1),
-    Wall(8, 3, 4, 1),
-    Wall(3, 5, 1, 5),
-    Wall(5, 5, 5, 5),
-    Wall(11, 5, 1, 5),
-    Wall(3, 11, 4, 1),
-    Wall(8, 11, 4, 1),
-    Wall(4, 13, 1, 2),
-    Wall(10, 13, 1, 2),
-    Wall(6, 13, 3, 1),
-    Wall(12, 1, 2, 1),
-    Wall(13, 2, 1, 5),
-    Wall(13, 8, 1, 5),
-    Wall(12, 13, 2, 1)
-]
-
-dots = [
-    Dot(0, 0, YELLOW),
-    Dot(0, 1, YELLOW),
-    Dot(0, 2, YELLOW),
-    Dot(0, 3, YELLOW),
-    Dot(0, 4, YELLOW),
-    Dot(0, 5, YELLOW),
-    Dot(0, 6, YELLOW),
-    Dot(0, 7, YELLOW),
-    Dot(0, 8, YELLOW),
-    Dot(0, 9, YELLOW),
-    Dot(0, 10, YELLOW),
-    Dot(0, 11, YELLOW),
-    Dot(0, 12, YELLOW),
-    Dot(0, 13, YELLOW),
-    Dot(0, 14, YELLOW),
-    Dot(1, 0, YELLOW),
-    Dot(1, 0, YELLOW),
-    Dot(1, 7, YELLOW),
-    Dot(1, 14, YELLOW),
-    Dot(2, 0, YELLOW),
-    Dot(2, 2, YELLOW),
-    Dot(2, 3, YELLOW),
-    Dot(2, 4, YELLOW),
-    Dot(2, 5, YELLOW),
-    Dot(2, 6, YELLOW),
-    Dot(2, 7, YELLOW),
-    Dot(2, 8, YELLOW),
-    Dot(2, 9, YELLOW),
-    Dot(2, 10, YELLOW),
-    Dot(2, 11, YELLOW),
-    Dot(2, 12, YELLOW),
-    Dot(2, 14, YELLOW),
-    Dot(3, 0, YELLOW),
-    Dot(3, 1, YELLOW),
-    Dot(3, 2, YELLOW),
-    Dot(3, 4, YELLOW),
-    Dot(3, 10, YELLOW),
-    Dot(3, 12, YELLOW),
-    Dot(3, 13, YELLOW),
-    Dot(3, 14, YELLOW),
-    Dot(4, 2, YELLOW),
-    Dot(4, 4, YELLOW),
-    Dot(4, 5, YELLOW),
-    Dot(4, 6, YELLOW),
-    Dot(4, 7, YELLOW),
-    Dot(4, 8, YELLOW),
-    Dot(4, 9, YELLOW),
-    Dot(4, 10, YELLOW),
-    Dot(4, 12, YELLOW),
-    Dot(5, 0, YELLOW),
-    Dot(5, 1, YELLOW),
-    Dot(5, 2, YELLOW),
-    Dot(5, 4, YELLOW),
-    Dot(5, 10, YELLOW),
-    Dot(5, 12, YELLOW),
-    Dot(5, 13, YELLOW),
-    Dot(5, 14, YELLOW),
-    Dot(6, 0, YELLOW),
-    Dot(6, 2, YELLOW),
-    Dot(6, 4, YELLOW),
-    Dot(6, 10, YELLOW),
-    Dot(6, 12, YELLOW),
-    Dot(6, 14, YELLOW),
-    Dot(7, 0, YELLOW),
-    Dot(7, 2, YELLOW),
-    Dot(7, 3, YELLOW),
-    Dot(7, 4, YELLOW),
-    Dot(7, 10, YELLOW),
-    Dot(7, 11, YELLOW),
-    Dot(7, 12, YELLOW),
-    Dot(7, 14, YELLOW),
-    Dot(8, 0, YELLOW),
-    Dot(8, 2, YELLOW),
-    Dot(8, 4, YELLOW),
-    Dot(8, 10, YELLOW),
-    Dot(8, 12, YELLOW),
-    Dot(8, 14, YELLOW),
-    Dot(9, 0, YELLOW),
-    Dot(9, 1, YELLOW),
-    Dot(9, 2, YELLOW),
-    Dot(9, 4, YELLOW),
-    Dot(9, 10, YELLOW),
-    Dot(9, 12, YELLOW),
-    Dot(9, 13, YELLOW),
-    Dot(9, 14, YELLOW),
-    Dot(10, 2, YELLOW),
-    Dot(10, 4, YELLOW),
-    Dot(10, 5, YELLOW),
-    Dot(10, 6, YELLOW),
-    Dot(10, 7, YELLOW),
-    Dot(10, 8, YELLOW),
-    Dot(10, 9, YELLOW),
-    Dot(10, 10, YELLOW),
-    Dot(10, 12, YELLOW),
-    Dot(11, 0, YELLOW),
-    Dot(11, 1, YELLOW),
-    Dot(11, 2, YELLOW),
-    Dot(11, 4, YELLOW),
-    Dot(11, 10, YELLOW),
-    Dot(11, 12, YELLOW),
-    Dot(11, 13, YELLOW),
-    Dot(11, 14, YELLOW),
-    Dot(12, 0, YELLOW),
-    Dot(12, 2, YELLOW),
-    Dot(12, 3, YELLOW),
-    Dot(12, 4, YELLOW),
-    Dot(12, 5, YELLOW),
-    Dot(12, 6, YELLOW),
-    Dot(12, 7, YELLOW),
-    Dot(12, 8, YELLOW),
-    Dot(12, 9, YELLOW),
-    Dot(12, 10, YELLOW),
-    Dot(12, 11, YELLOW),
-    Dot(12, 12, YELLOW),
-    Dot(12, 14, YELLOW),
-    Dot(13, 0, YELLOW),
-    Dot(13, 0, YELLOW),
-    Dot(13, 7, YELLOW),
-    Dot(13, 14, YELLOW),
-    Dot(14, 0, YELLOW),
-    Dot(14, 1, YELLOW),
-    Dot(14, 2, YELLOW),
-    Dot(14, 3, YELLOW),
-    Dot(14, 4, YELLOW),
-    Dot(14, 5, YELLOW),
-    Dot(14, 6, YELLOW),
-    Dot(14, 7, YELLOW),
-    Dot(14, 8, YELLOW),
-    Dot(14, 9, YELLOW),
-    Dot(14, 10, YELLOW),
-    Dot(14, 11, YELLOW),
-    Dot(14, 12, YELLOW),
-    Dot(14, 13, YELLOW),
-    Dot(14, 14, YELLOW)
-# don't ask how long this took
-]
+grid = open('grid.txt', 'r')
+for y, line in enumerate(grid):
+    for x, char in enumerate(line): # make an assertion that the dimensions are correct
+        if char == '0':
+            WALLS.append(Wall(x, y, 1, 1))
+        elif char == '1':
+            dots.append(Dot(x, y, YELLOW))
+        elif char == '2':
+            ghosts.append(Player(x, y, BLUE))
+grid.close()
 
 def draw_window():
 
@@ -435,11 +273,11 @@ def main():
             if player_at_dot():
                 score += 1
             
-            # if event.type == DUPLICATE_GHOSTS:
-            #     ghost_count = len(ghosts)
-            #     for i in range(ghost_count):
-            #         new_ghost = Circle(ghosts[i].pos.x, ghosts[i].pos.y, ghosts[i].color)
-            #         ghosts.append(new_ghost)
+            if event.type == DUPLICATE_GHOSTS:
+                ghost_count = len(ghosts)
+                for i in range(ghost_count):
+                    new_ghost = Player(ghosts[i].pos.x, ghosts[i].pos.y, ghosts[i].color)
+                    ghosts.append(new_ghost)
             
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_LEFT and not will_collide(player, Vector2(-1, 0)):
