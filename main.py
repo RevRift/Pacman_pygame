@@ -20,6 +20,8 @@ Adding sounds
 Representing Vax-man and the ghosts with images
 Make an assertion that the dimensions of the grid are valid
 
+
+RevRave made this change
 """
 
 
