@@ -6,7 +6,7 @@ Vax-man is a yellow circle, the ghosts are blue circles
 Use arrow keys to move vaxman
 At the start, there are 10 ghosts on the board
 Ghosts duplicate every 15 seconds
-Vax-man can vaccinate (i.e. delete) ghosts
+Vax-man can vaccinate (i.e. delete) ghosts                                                            
 Vax-man can also collect yellow dots
 
 Goal - collect all the dots before the number of ghosts reaches 40
@@ -20,8 +20,8 @@ Adding sounds
 Representing Vax-man and the ghosts with images
 Make an assertion that the dimensions of the grid are valid
 
-
-RevRave made this change
+RevRave comments:
+make the chance that a ghost goes back on itself smaller
 """
 
 
