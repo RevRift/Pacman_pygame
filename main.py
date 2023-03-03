@@ -11,6 +11,9 @@ Vax-man can also collect yellow dots
 
 Goal - collect all the dots before the number of ghosts reaches 40
 
+grid.txt is the map layout, where 0 = wall, 1 = dot, 2 = ghost.
+the map shouldn't have any deadends
+
 Things to improve:
 
 Making the movement less choppy
@@ -21,7 +24,9 @@ Representing Vax-man and the ghosts with images
 Make an assertion that the dimensions of the grid are valid
 
 RevRave comments:
-make the chance that a ghost goes back on itself smaller
+make the chance that a ghost goes back on itself smaller - implemented by RevRift
+
+RevRift comments:
 """
 
 
@@ -93,7 +98,6 @@ class Game:
 
     @staticmethod
     def set_up_grid():
-        # grid.txt is the map layout, where 0 = wall, 1 = dot, 2 = ghost
         grid_file = open('grid.txt', 'r')
         grid = grid_file.readlines()
         grid_file.close()
@@ -156,9 +160,12 @@ class Game:
     def rand_direction(ghost):
         if (Game.will_collide(ghost, ghost.direction) # if ghost will collide, change it's direction
           or ghost.pos in Game.JUNCTIONS and randint(0, 1)): # ghost will sometimes turn at junctions
-            new_direction = DIRECTIONS[randint(0, len(DIRECTIONS)-1)]
+            directions = DIRECTIONS[:]
+            if randint(0, 2): # the ghost is unlikely to go back on itself
+                directions.remove(Vector2(-ghost.direction.x, -ghost.direction.y))
+            new_direction = directions[randint(0, len(directions)-1)]
             while Game.will_collide(ghost, new_direction):
-                new_direction = DIRECTIONS[randint(0, len(DIRECTIONS)-1)]
+                new_direction = directions[randint(0, len(directions)-1)]
             return new_direction
         return ghost.direction
 
